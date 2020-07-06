@@ -10,8 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MediatonicPets.Models;
+using MediatonicPets.Services;
 
-namespace mediatonic_pets
+namespace MediatonicPets
 {
     public class Startup
     {
@@ -25,6 +28,16 @@ namespace mediatonic_pets
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PetDatabaseSettings>(
+                Configuration.GetSection(nameof(PetDatabaseSettings)));
+
+            services.AddSingleton<IPetDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<PetDatabaseSettings>>().Value);
+
+
+            services.AddSingleton<PetService>();
+            services.AddSingleton<UserService>();
+
             services.AddControllers();
         }
 
