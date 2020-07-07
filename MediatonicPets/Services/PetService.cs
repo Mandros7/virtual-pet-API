@@ -61,8 +61,10 @@ namespace MediatonicPets.Services
             return newPet;
         }
 
-        public void Update(string id, Pet newPet) =>
+        public void Update(string id, Pet newPet) {
+            newPet.UpdateMetrics();
             _pets.ReplaceOne(pet => pet.Id == id, newPet);
+        }
 
         public void Stroke(string id, Pet petToStroke) {
             petToStroke.UpdateMetrics();

@@ -46,9 +46,9 @@ namespace MediatonicPets.Models
 
         public void UpdateMetrics () {
             TimeSpan elapsed = DateTime.Now - this.LastUpdate;
-            float newHappiness = this.Happiness + this.HappinessRate * elapsed.Minutes;
+            float newHappiness = this.Happiness + this.HappinessRate * (float)elapsed.TotalMinutes;
             this.Happiness = (newHappiness < HAPPINESS_MIN) ? HAPPINESS_MIN : newHappiness;
-            float newHungriness = this.Hungriness + this.HungrinessRate * elapsed.Minutes;
+            float newHungriness = this.Hungriness + this.HungrinessRate * (float)elapsed.TotalMinutes;
             this.Hungriness = (newHungriness > HUNGRINESS_MAX) ? HUNGRINESS_MAX : newHungriness;
             this.LastUpdate = DateTime.Now;
         }

@@ -33,5 +33,9 @@ namespace MediatonicPets.Factories
             BASE_STROKE_HAPINESS = settings.StrokeHapiness;
             BASE_FEED_HUNGRINESS = settings.FeedHungriness;       
         }
+
+        public DogFactory() {
+            
+        }
     }
 }
