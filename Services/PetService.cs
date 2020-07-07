@@ -1,4 +1,5 @@
 using MediatonicPets.Models;
+using MediatonicPets.Factories;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -10,37 +11,49 @@ namespace MediatonicPets.Services
     {
         private readonly IMongoCollection<Pet> _pets;
         private readonly IMongoCollection<User> _owners;
-        private readonly PetFactory _petFactory;
 
-        public PetService(IPetDatabaseSettings settings)
+        private readonly List<IPetConfigurationSettings> _petSettings;
+
+        public PetService(IPetDatabaseSettings settings, IGlobalPetConfigurationSettings petSettings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
+            _petSettings = petSettings.Metrics;
             _pets = database.GetCollection<Pet>(settings.PetCollectionName);
             _owners = database.GetCollection<User>(settings.UserCollectionName);
         }
 
         public List<Pet> Get() {
             List<Pet> foundPets = _pets.Find(pet => true).ToList();
-            return foundPets.Select(pet => _petFactory.UpdatePetValues(pet)).ToList();
+            foreach (Pet pet in foundPets)
+            {
+                pet.UpdateMetrics();
+            }
+            return foundPets;
         }
 
         public Pet Get(string id) {
             Pet foundPet = _pets.Find<Pet>(pet => pet.Id == id).FirstOrDefault();
-            return _petFactory.UpdatePetValues(foundPet);
+            foundPet.UpdateMetrics();
+            return foundPet;
         }
 
         public List<Pet> GetPets(string ownerId) {
             List<Pet> foundPets = _pets.Find<Pet>(pet => pet.OwnerID == ownerId).ToList();
-            return foundPets.Select(pet => _petFactory.UpdatePetValues(pet)).ToList();
+            foreach (Pet pet in foundPets)
+            {
+                pet.UpdateMetrics();
+            }
+            return foundPets;        
         }
         public Pet Create(string id, string petType)
         {
-            if (Enum.IsDefined(typeof(PetTypes), petType)) {
+            if (!Enum.IsDefined(typeof(PetTypes), petType)) {
                 return null;
             }
             Pet newPet = GeneratePetByType(petType);
+            newPet.OwnerID = id;
             newPet.LastUpdate = DateTime.Now;
             _pets.InsertOne(newPet);
             var update = Builders<User>.Update.Push<string>(owner => owner.OwnedPets, newPet.Id);
@@ -52,13 +65,15 @@ namespace MediatonicPets.Services
             _pets.ReplaceOne(pet => pet.Id == id, newPet);
 
         public void Stroke(string id, Pet petToStroke) {
-            Pet updatedPet = _petFactory.UpdatePetValues(petToStroke);
-            Update(id, _petFactory.StrokePet(updatedPet));
+            petToStroke.UpdateMetrics();
+            petToStroke.Stroke();
+            Update(id, petToStroke);
         }
 
         public void Feed(string id, Pet petToFeed) {
-            Pet updatedPet = _petFactory.UpdatePetValues(petToFeed);
-            Update(id, _petFactory.FeedPet(updatedPet));
+            petToFeed.UpdateMetrics();
+            petToFeed.Feed();
+            Update(id, petToFeed);
         }
 
 
@@ -74,10 +89,10 @@ namespace MediatonicPets.Services
             switch (petTypeLC)
             {
                 case "dog":
-                    petFact = new DogFactory();
+                    petFact = new DogFactory((IPetConfigurationSettings)_petSettings.Where(sett => sett.Type == "dog"));
                     break;
                 default:
-                    petFact = new DogFactory();
+                    petFact = new DogFactory((IPetConfigurationSettings)_petSettings.Where(sett => sett.Type == "dog"));
                     break;
             }
             return petFact.GetPet();

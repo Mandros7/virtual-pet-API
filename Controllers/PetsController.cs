@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MediatonicPets.Models;
@@ -38,7 +35,7 @@ namespace MediatonicPets.Controllers
             return pet;
         }
 
-        [HttpPost("{id:length(24)}/{type:length(10)}")]
+        [HttpPost("{id:length(24)}/{type}")]
         public ActionResult<Pet> Create(string id, string type)
         {
             Pet newPet = _petService.Create(id, type);

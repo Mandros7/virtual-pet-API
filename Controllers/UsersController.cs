@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MediatonicPets.Models;
 using MediatonicPets.Services;
 
 namespace MediatonicPets.Controllers
-{
+{    
+    [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         
@@ -38,15 +37,15 @@ namespace MediatonicPets.Controllers
             return user;
         }
 
-        [HttpPost("{id:length(24)}")]
-        public ActionResult<User> Create(User user)
+        [HttpPost]
+        public ActionResult<User> Create()
         {
-            User newUser = _userService.Create(user);
+            User newUser = _userService.Create(new User());
             if (newUser == null)
             {
                 return BadRequest();
             }
-            return CreatedAtRoute("GetPet", new { id = newUser.Id.ToString() }, newUser);
+            return CreatedAtRoute("GetUser", new { id = newUser.Id.ToString() }, newUser);
         }
 
         [HttpDelete("{id:length(24)}")]

@@ -27,6 +27,7 @@ namespace MediatonicPets.Services
 
         public User Create(User user)
         {
+            user.OwnedPets = new List<string> {};
             _users.InsertOne(user);
             return user;
         }
