@@ -8,13 +8,13 @@ namespace MediatonicPets.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PetController : ControllerBase
+    public class PetsController : ControllerBase
     {
         private readonly PetService _petService;
 
-        private readonly ILogger<PetController> _logger;
+        private readonly ILogger<PetsController> _logger;
 
-        public PetController(ILogger<PetController> logger, PetService petService)
+        public PetsController(ILogger<PetsController> logger, PetService petService)
         {
             _logger = logger;
             _petService = petService;
@@ -87,7 +87,7 @@ namespace MediatonicPets.Controllers
                 return NotFound();
             }
             
-            _petService.Stroke(id, pet);
+            _petService.Stroke(id);
 
             return NoContent();
         }
@@ -102,7 +102,7 @@ namespace MediatonicPets.Controllers
                 return NotFound();
             }
             
-            _petService.Feed(id, pet);
+            _petService.Feed(id);
 
             return NoContent();
         }

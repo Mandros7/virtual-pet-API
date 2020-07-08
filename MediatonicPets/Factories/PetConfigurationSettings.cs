@@ -6,6 +6,20 @@ namespace MediatonicPets.Factories
     public class GlobalPetConfigurationSettings : IGlobalPetConfigurationSettings
     {
         public List<IPetConfigurationSettings> Metrics { get; set; }   
+        public static GlobalPetConfigurationSettings generateDefaultSettings() {
+            
+            GlobalPetConfigurationSettings petSettings = new GlobalPetConfigurationSettings();
+            PetConfigurationSettings petMetrics = new PetConfigurationSettings();
+            petMetrics.Type = "dog";
+            petMetrics.HapinessRate = -0.1f;
+            petMetrics.HungrinessRate = 1.0f;
+            petMetrics.Hungriness = 50.0f;
+            petMetrics.Hapiness = 50.0f;
+            petMetrics.FeedHungriness = -10.0f;
+            petMetrics.StrokeHapiness = 10.0f;
+            petSettings.Metrics = new List<IPetConfigurationSettings> {petMetrics};
+            return petSettings;
+        }
     }
 
     public interface IGlobalPetConfigurationSettings
@@ -22,7 +36,6 @@ namespace MediatonicPets.Factories
         public float HungrinessRate { get; set; }
         public float StrokeHapiness { get; set; }
         public float FeedHungriness { get; set; }
-
     }
 
     public interface IPetConfigurationSettings
@@ -35,5 +48,6 @@ namespace MediatonicPets.Factories
         float StrokeHapiness { get; set; }
         float FeedHungriness { get; set; }
     }
+
 
 }

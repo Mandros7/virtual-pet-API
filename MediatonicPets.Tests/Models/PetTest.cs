@@ -9,7 +9,6 @@ namespace MediatonicPets.Tests.Models
     {
 
         private readonly DogFactory _dogFactory;
-        private readonly PetConfigurationSettings _dogSettings;
         public PetTest() {
             _dogFactory = new DogFactory();
         }
@@ -39,6 +38,46 @@ namespace MediatonicPets.Tests.Models
             generatedPet.UpdateMetrics();
             Assert.Equal(generatedPet.Hungriness, generatedPet.HUNGRINESS_MAX);
             Assert.Equal(generatedPet.Happiness, generatedPet.HAPPINESS_MIN);
+        }
+
+        [Fact]
+        public void StrokeTest()
+        {
+            Pet generatedPet = _dogFactory.GetPet();
+            generatedPet.Happiness = generatedPet.HAPPINESS_MAX - 2.0f*generatedPet.StrokeHapiness;
+            float expectedHapiness = generatedPet.Happiness + generatedPet.StrokeHapiness;
+            generatedPet.Stroke();
+            Assert.Equal(generatedPet.Happiness, expectedHapiness);
+        }
+
+        [Fact]
+        public void StrokeTestMax()
+        {
+            Pet generatedPet = _dogFactory.GetPet();
+            generatedPet.Happiness = generatedPet.HAPPINESS_MAX;
+            float expectedHapiness = generatedPet.HAPPINESS_MAX;
+            generatedPet.Stroke();
+            Assert.Equal(generatedPet.Happiness, expectedHapiness);
+        }
+
+        [Fact]
+        public void FeedTest()
+        {
+            Pet generatedPet = _dogFactory.GetPet();
+            generatedPet.Hungriness = generatedPet.HUNGRINESS_MAX + 2.0f*generatedPet.FeedHungriness;
+            float expectedHungriness = generatedPet.Hungriness + generatedPet.FeedHungriness;
+            generatedPet.Feed();
+            Assert.Equal(generatedPet.Hungriness, expectedHungriness);
+        }
+
+        [Fact]
+        public void FeedTestMin()
+        {
+            Pet generatedPet = _dogFactory.GetPet();
+            generatedPet.Hungriness = generatedPet.HUNGRINESS_MIN;
+            float expectedHungriness = generatedPet.HUNGRINESS_MIN;
+            generatedPet.Feed();
+            Assert.Equal(generatedPet.Hungriness, expectedHungriness);
         }
 
     }

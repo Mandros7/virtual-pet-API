@@ -39,7 +39,7 @@ namespace MediatonicPets.Services
             return foundPet;
         }
 
-        public List<Pet> GetPets(string ownerId) {
+        public List<Pet> GetUserPets(string ownerId) {
             List<Pet> foundPets = _pets.Find<Pet>(pet => pet.OwnerID == ownerId).ToList();
             foreach (Pet pet in foundPets)
             {
@@ -47,12 +47,9 @@ namespace MediatonicPets.Services
             }
             return foundPets;        
         }
-        public Pet Create(string id, string petType)
+        public Pet Create(string id, string petType = "dog")
         {
-            if (!Enum.IsDefined(typeof(PetTypes), petType)) {
-                return null;
-            }
-            Pet newPet = GeneratePetByType(petType);
+            Pet newPet = PetFactory.GeneratePetByType(petType,_petSettings);
             newPet.OwnerID = id;
             newPet.LastUpdate = DateTime.Now;
             _pets.InsertOne(newPet);
@@ -66,13 +63,15 @@ namespace MediatonicPets.Services
             _pets.ReplaceOne(pet => pet.Id == id, newPet);
         }
 
-        public void Stroke(string id, Pet petToStroke) {
+        public void Stroke(string id) {
+            Pet petToStroke = Get(id); 
             petToStroke.UpdateMetrics();
             petToStroke.Stroke();
             Update(id, petToStroke);
         }
 
-        public void Feed(string id, Pet petToFeed) {
+        public void Feed(string id) {
+            Pet petToFeed = Get(id);
             petToFeed.UpdateMetrics();
             petToFeed.Feed();
             Update(id, petToFeed);
@@ -80,25 +79,10 @@ namespace MediatonicPets.Services
 
 
         public void Remove(string id) {
+            string ownerID = Get(id).OwnerID;
             _pets.DeleteOne(pet => pet.Id == id);
-            var update = Builders<User>.Update.PullFilter(user => user.OwnedPets, pet => pet == id);
-            _owners.UpdateOne(user => user.OwnedPets.Contains(id),update);
+            var update = Builders<User>.Update.Pull(user => user.OwnedPets, id);
+            _owners.UpdateOne(user => user.Id == ownerID ,update);
         }
-
-        private Pet GeneratePetByType(string petType) {
-            PetFactory petFact;
-            string petTypeLC = petType.ToLower();
-            switch (petTypeLC)
-            {
-                case "dog":
-                    petFact = new DogFactory((IPetConfigurationSettings)_petSettings.Where(sett => sett.Type == "dog"));
-                    break;
-                default:
-                    petFact = new DogFactory((IPetConfigurationSettings)_petSettings.Where(sett => sett.Type == "dog"));
-                    break;
-            }
-            return petFact.GetPet();
-        }
-
     }
 }
