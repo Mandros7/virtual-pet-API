@@ -1,6 +1,8 @@
 namespace MediatonicPets.Models
 {
-
+    /// <summary>
+    /// Class <c>PetDatabaseSettings</c> allows deserialization of Database connection parameters. 
+    /// </summary>
     public class PetDatabaseSettings : IPetDatabaseSettings
     {
         public string PetCollectionName { get; set; }

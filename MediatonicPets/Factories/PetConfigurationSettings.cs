@@ -2,7 +2,10 @@ using System.Collections.Generic;
 
 namespace MediatonicPets.Factories
 {
-
+    /// <summary>
+    /// Class <c>GlobalPetConfigurationSettings</c> allows deserialization of all Pet configurations, 
+    /// removing the need to modify metric values within the code.
+    /// </summary>
     public class GlobalPetConfigurationSettings : IGlobalPetConfigurationSettings
     {
         public List<IPetConfigurationSettings> Metrics { get; set; }   
@@ -26,7 +29,10 @@ namespace MediatonicPets.Factories
     {
         List<IPetConfigurationSettings> Metrics { get; set; }
     }
-
+    /// <summary>
+    /// Class <c>PetConfigurationSettings</c> allows deserialization of one specific set of pet metrics, 
+    /// removing the need to modify metric values within the code.
+    /// </summary>
     public class PetConfigurationSettings : IPetConfigurationSettings
     {
         public string Type { get; set; }

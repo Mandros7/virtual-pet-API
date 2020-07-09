@@ -4,6 +4,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MediatonicPets.Models
 {
+    /// <summary>
+    /// Class <c>Pet</c> contains the generic model for a User, with no current methods
+    /// </summary>
     public class User
     {
         [BsonId]

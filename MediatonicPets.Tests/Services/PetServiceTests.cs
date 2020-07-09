@@ -38,7 +38,7 @@ namespace MediatonicPets.Tests.Services
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            Pet singlePet = _petService.Create(singleUser.Id);
+            Pet singlePet = _petService.Create(singleUser.Id,"dog");
             Pet foundPet = _petsDB.Find(pet => pet.Id == singlePet.Id).FirstOrDefault();
             User updatedUser = _userService.Get(singleUser.Id);
             Assert.Equal(singlePet.Id, foundPet.Id);
@@ -47,11 +47,19 @@ namespace MediatonicPets.Tests.Services
         }
 
         [Fact]
+        public void CreateInvalidPetTest() {
+            _usersDB.DeleteMany(user => true);
+            _petsDB.DeleteMany(pet => true);
+            User singleUser = _userService.Create(new User());
+            Pet singlePet = _petService.Create(singleUser.Id,"dragon");
+            Assert.Null(singlePet);
+        }
+        [Fact]
         public void GetPetByIDTest() {
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            Pet singlePet = _petService.Create(singleUser.Id);
+            Pet singlePet = _petService.Create(singleUser.Id,"dog");
             Pet foundPet = _petService.Get(singlePet.Id);
             Assert.Equal(singlePet.Id,foundPet.Id);
         }
@@ -61,8 +69,8 @@ namespace MediatonicPets.Tests.Services
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            _petService.Create(singleUser.Id);
-            _petService.Create(singleUser.Id);
+            _petService.Create(singleUser.Id,"dog");
+            _petService.Create(singleUser.Id,"cat");
             List<Pet> foundPets = _petService.Get();
             List<Pet> foundUserPets = _petService.GetUserPets(singleUser.Id);
             Assert.Equal(2,foundPets.Count);
@@ -74,7 +82,7 @@ namespace MediatonicPets.Tests.Services
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            Pet initialPet = _petService.Create(singleUser.Id);
+            Pet initialPet = _petService.Create(singleUser.Id,"dog");
             _petService.Stroke(initialPet.Id);
             Pet foundPet = _petService.Get(initialPet.Id);
             Assert.NotEqual(initialPet.LastUpdate, foundPet.LastUpdate);
@@ -85,7 +93,7 @@ namespace MediatonicPets.Tests.Services
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            Pet initialPet = _petService.Create(singleUser.Id);
+            Pet initialPet = _petService.Create(singleUser.Id,"dog");
             _petService.Feed(initialPet.Id);
             Pet foundPet = _petService.Get(initialPet.Id);
             Assert.NotEqual(initialPet.LastUpdate, foundPet.LastUpdate);

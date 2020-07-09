@@ -1,10 +1,15 @@
 using MediatonicPets.Models;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MediatonicPets.Services
 {
+    /// <summary>
+    /// Class <c>UserService</c>  makes uses of Models and MongoDB drivers to 
+    /// act as a bridge between the received controller actions and the persistence MongoDB back-end.
+    /// </summary>
     public class UserService
     {
         private readonly IMongoCollection<User> _users;
@@ -27,14 +32,21 @@ namespace MediatonicPets.Services
 
         public User Create(User user)
         {
-            user.OwnedPets = new List<string> {};
+            user.OwnedPets = new List<string> {}; // Initialized with no pets
             _users.InsertOne(user);
             return user;
         }
         
         public void Remove(string id) {
             _users.DeleteOne(user => user.Id == id);
-            _pets.DeleteMany(pet => pet.OwnerID == id);
+            // Remove all associated pets
+            _pets.DeleteMany(pet => pet.OwnerID == id); 
+            // We could also allow them to stay as orphans and let someone else adopt them...
         }
+
+        public void AdoptPet(string id) {
+            throw new NotImplementedException();  
+        }
+        
     }
 }
