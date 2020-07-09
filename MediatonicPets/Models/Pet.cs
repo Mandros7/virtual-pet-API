@@ -41,7 +41,7 @@ namespace MediatonicPets.Models
 
         public float HungrinessRate { get; set;}
 
-        public float StrokeHapiness { get; set;}
+        public float StrokeHappiness { get; set;}
 
         public float FeedHungriness { get; set;}
 
@@ -58,32 +58,28 @@ namespace MediatonicPets.Models
         /// to the actual usage of the API, with unused pets only using storage on the DB.
         /// </summary>
         public void UpdateMetrics () {
-            TimeSpan elapsed = DateTime.Now - this.LastUpdate; //Detect time since last update
+            TimeSpan elapsed = DateTime.UtcNow - this.LastUpdate; //Detect time since last update
             float newHappiness = this.Happiness + this.HappinessRate * (float)elapsed.TotalMinutes;
             this.Happiness = (newHappiness < HAPPINESS_MIN) ? HAPPINESS_MIN : newHappiness;
-            this.Happiness = (newHappiness > HAPPINESS_MAX) ? HAPPINESS_MAX : newHappiness;
             float newHungriness = this.Hungriness + this.HungrinessRate * (float)elapsed.TotalMinutes;
             this.Hungriness = (newHungriness > HUNGRINESS_MAX) ? HUNGRINESS_MAX : newHungriness;
-            this.Hungriness = (newHungriness < HUNGRINESS_MIN) ? HUNGRINESS_MIN : newHungriness;
-            this.LastUpdate = DateTime.Now;
+            this.LastUpdate = DateTime.UtcNow;
         }
         /// <summary>
         /// Method <c>Stroke</c> applies the StrokeHapiness modifier (which should have a positive value).
-        /// It also ensures hapiness is never below its minimum or above maximum!
+        /// It also ensures hapiness is never out of bounds!
         /// </summary>
         public void Stroke () {
-            float newHappiness = this.Happiness + this.StrokeHapiness;
+            float newHappiness = this.Happiness + this.StrokeHappiness;
             this.Happiness = (newHappiness > HAPPINESS_MAX) ? HAPPINESS_MAX : newHappiness;
-            this.Happiness = (newHappiness < HAPPINESS_MIN) ? HAPPINESS_MIN : newHappiness;
         }
         /// <summary>
         /// Method <c>Feed</c> applies the FeedHungriness modifier (which should have a negative value).
-        /// It also ensures hungriness is never below its minimum or above maximum!
+        /// It also ensures hungriness is never out of bounds
         /// </summary>
         public void Feed () {
             float newHungriness = this.Hungriness + this.FeedHungriness;
             this.Hungriness = (newHungriness < HUNGRINESS_MIN) ? HUNGRINESS_MIN : newHungriness;
-            this.Hungriness = (newHungriness > HUNGRINESS_MAX) ? HUNGRINESS_MAX : newHungriness;
         }
         
 

@@ -35,10 +35,10 @@ namespace MediatonicPets.Controllers
             return pet;
         }
 
-        [HttpPost("{id:length(24)}/{type}")]
-        public ActionResult<Pet> Create(string id, string type)
+        [HttpPost("{ownerID:length(24)}/{type}")]
+        public ActionResult<Pet> Create(string ownerID, string type)
         {
-            Pet newPet = _petService.Create(id, type);
+            Pet newPet = _petService.Create(ownerID, type);
             if (newPet == null)
             {
                 return BadRequest();
@@ -87,9 +87,8 @@ namespace MediatonicPets.Controllers
                 return NotFound();
             }
             
-            _petService.Stroke(id);
-
-            return NoContent();
+            Pet resultPet = _petService.Stroke(id);
+            return Ok(resultPet);
         }
 
         [HttpPut("{id:length(24)}/feed")]
@@ -102,9 +101,9 @@ namespace MediatonicPets.Controllers
                 return NotFound();
             }
             
-            _petService.Feed(id);
+            Pet resultPet = _petService.Feed(id);
 
-            return NoContent();
+            return Ok(resultPet);
         }
         
 

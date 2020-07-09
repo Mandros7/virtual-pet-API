@@ -9,7 +9,7 @@ namespace MediatonicPets.Factories.Tests
         private readonly DogFactory _dogFactory;
         private readonly PetConfigurationSettings _dogSettings;
 
-        private readonly List<IPetConfigurationSettings> _allSettings;
+        private readonly List<PetConfigurationSettings> _allSettings;
 
         public FactoryTest () {
 

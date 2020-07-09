@@ -17,7 +17,7 @@ namespace MediatonicPets.Factories
         }
 
         public CatFactory(IPetConfigurationSettings settings) : base(settings) {
-            BASE_TYPE = "dog";                   
+            BASE_TYPE = "cat";                   
         }
 
         public CatFactory() : base() {

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MediatonicPets.Factories;
 using MediatonicPets.Models;
 using MediatonicPets.Services;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace MediatonicPets.Tests.Services
             settings.PetCollectionName = "pets";
             settings.UserCollectionName = "users";
             _userService = new UserService(settings);
-            _petService = new PetService(settings,GlobalPetConfigurationSettings.generateDefaultSettings());
+            _petService = new PetService(settings, GlobalPetConfigurationSettings.generateDefaultSettings().Metrics);
             
             // Cleanup environment before running tests
             var client = new MongoClient(settings.ConnectionString);

@@ -10,32 +10,32 @@ namespace MediatonicPets.Factories
     /// </summary>
     public abstract class PetFactory
     {
-        protected float BASE_HAPINESS = 50.0f;
+        protected float BASE_HAPPINESS = 50.0f;
         protected float BASE_HUNGRINESS = 50.0f;
-        protected float BASE_HAPINESS_RATE = -0.3f;
+        protected float BASE_HAPPINESS_RATE = -0.3f;
         protected float BASE_HUNGRINESS_RATE = 0.4f;
-        protected float BASE_STROKE_HAPINESS = 5.0f;
+        protected float BASE_STROKE_HAPPINESS = 5.0f;
         protected float BASE_FEED_HUNGRINESS = -10.0f;
 
         /// <summary>Method <c>GetPet</c> returns the pet using the current configuration values</summary>
         public virtual Pet GetPet() {
             Pet newPet = new Pet();
-            newPet.Happiness = BASE_HAPINESS;
+            newPet.Happiness = BASE_HAPPINESS;
             newPet.Hungriness = BASE_HUNGRINESS;
-            newPet.HappinessRate = BASE_HAPINESS_RATE;
+            newPet.HappinessRate = BASE_HAPPINESS_RATE;
             newPet.HungrinessRate = BASE_HUNGRINESS_RATE;
-            newPet.StrokeHapiness = BASE_STROKE_HAPINESS;
+            newPet.StrokeHappiness = BASE_STROKE_HAPPINESS;
             newPet.FeedHungriness = BASE_FEED_HUNGRINESS;
             return newPet;
         }    
 
         /// <summary>This constructor allows to use configuration files as sources for the metrics</summary>
         public PetFactory(IPetConfigurationSettings settings)  {
-            BASE_HAPINESS = settings.Hapiness;
+            BASE_HAPPINESS = settings.Happiness;
             BASE_HUNGRINESS = settings.Hungriness;
-            BASE_HAPINESS_RATE = settings.HapinessRate;
+            BASE_HAPPINESS_RATE = settings.HappinessRate;
             BASE_HUNGRINESS_RATE = settings.HungrinessRate;
-            BASE_STROKE_HAPINESS = settings.StrokeHapiness;
+            BASE_STROKE_HAPPINESS = settings.StrokeHappiness;
             BASE_FEED_HUNGRINESS = settings.FeedHungriness;  
         }
 
@@ -46,11 +46,11 @@ namespace MediatonicPets.Factories
         /// <summary>The static method <c>GeneratePetByType</c> instantiates a child Pet Factory 
         /// based on the type of Pet and using the config files as source.
         /// </summary>
-        public static Pet GeneratePetByType(string petType, List<IPetConfigurationSettings> _petSettings) {
+        public static Pet GeneratePetByType(string petType, List<PetConfigurationSettings> _petSettings) {
             PetFactory petFact;
             string petTypeLC = petType.ToLower();
-            IEnumerable<IPetConfigurationSettings> foundSettings = _petSettings.Where(sett => sett.Type == petTypeLC);
-            if (foundSettings.Count() == 0){
+            var foundSettings = _petSettings.Where(sett => sett.Type == petTypeLC).ToList();
+            if (foundSettings.Count == 0){
                 return null;
             }
             switch (petTypeLC)

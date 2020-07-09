@@ -44,8 +44,8 @@ namespace MediatonicPets.Tests.Models
         public void StrokeTest()
         {
             Pet generatedPet = _dogFactory.GetPet();
-            generatedPet.Happiness = generatedPet.HAPPINESS_MAX - 2.0f*generatedPet.StrokeHapiness;
-            float expectedHapiness = generatedPet.Happiness + generatedPet.StrokeHapiness;
+            generatedPet.Happiness = generatedPet.HAPPINESS_MAX - 2.0f*generatedPet.StrokeHappiness;
+            float expectedHapiness = generatedPet.Happiness + generatedPet.StrokeHappiness;
             generatedPet.Stroke();
             Assert.Equal(generatedPet.Happiness, expectedHapiness);
         }

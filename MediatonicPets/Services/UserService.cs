@@ -28,7 +28,7 @@ namespace MediatonicPets.Services
             _users.Find(user => true).ToList();
 
         public User Get(string id) =>
-            _users.Find<User>(user => user.Id == id).FirstOrDefault();
+            _users.Find<User>(user => user.Id.Equals(id)).FirstOrDefault();
 
         public User Create(User user)
         {
@@ -38,9 +38,9 @@ namespace MediatonicPets.Services
         }
         
         public void Remove(string id) {
-            _users.DeleteOne(user => user.Id == id);
+            _users.DeleteOne(user => user.Id.Equals(id));
             // Remove all associated pets
-            _pets.DeleteMany(pet => pet.OwnerID == id); 
+            _pets.DeleteMany(pet => pet.OwnerID.Equals(id)); 
             // We could also allow them to stay as orphans and let someone else adopt them...
         }
 

@@ -7,6 +7,11 @@ using Microsoft.Extensions.Options;
 using MediatonicPets.Models;
 using MediatonicPets.Services;
 using MediatonicPets.Factories;
+using System;
+using System.Reflection;
+using System.IO;
+using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace MediatonicPets
 {
@@ -25,19 +30,37 @@ namespace MediatonicPets
             services.Configure<PetDatabaseSettings>(
                 Configuration.GetSection(nameof(PetDatabaseSettings)));
             
-            services.Configure<GlobalPetConfigurationSettings>(
+            services.Configure<PetConfigurationSettings>(
                 Configuration.GetSection(nameof(GlobalPetConfigurationSettings)));
+
+            services.Configure<List<PetConfigurationSettings>>(
+                Configuration.GetSection("GlobalPetConfigurationSettings:PetConfigurationSettings"));
 
             services.AddSingleton<IPetDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<PetDatabaseSettings>>().Value);
 
-            services.AddSingleton<IGlobalPetConfigurationSettings>(sp =>
-                sp.GetRequiredService<IOptions<GlobalPetConfigurationSettings>>().Value);
+            services.AddSingleton<List<PetConfigurationSettings>>(sp =>
+                sp.GetRequiredService<IOptions<List<PetConfigurationSettings>>>().Value);
 
             services.AddSingleton<PetService>();
             services.AddSingleton<UserService>();
 
             services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Pet API",
+                    Description = "A simple Pet API using ASP.NET Core Web API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Hector Rodriguez",
+                        Email = "hectorrcov93@gmail.com",
+                        Url = new Uri("https://github.com/Mandros7"),
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +81,18 @@ namespace MediatonicPets
             {
                 endpoints.MapControllers();
             });
+
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pet API V1");
+                c.RoutePrefix = string.Empty;
+            });
+
         }
     }
 }
