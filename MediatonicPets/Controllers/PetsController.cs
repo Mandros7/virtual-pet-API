@@ -20,10 +20,20 @@ namespace MediatonicPets.Controllers
             _petService = petService;
         }
 
+        /// <summary>
+        /// Retrieves information about all existing Pets
+        /// </summary> 
+        [Produces("application/json")]
         [HttpGet]
         public ActionResult<List<Pet>> Get() =>
             _petService.Get();
 
+
+        /// <summary>
+        /// Retrieves information about a specific Pet 
+        /// </summary>
+        /// <param name="id"></param>
+        [Produces("application/json")]
         [HttpGet("{id:length(24)}", Name = "GetPet")]
         public ActionResult<Pet> Get(string id)
         {
@@ -35,6 +45,12 @@ namespace MediatonicPets.Controllers
             return pet;
         }
 
+        /// <summary>
+        /// Creates a specific Pet with a Type and an Owner ID.
+        /// </summary>
+        /// <param name="ownerID"></param> 
+        /// <param name="type"></param> 
+        [Produces("application/json")]
         [HttpPost("{ownerID:length(24)}/{type}")]
         public ActionResult<Pet> Create(string ownerID, string type)
         {
@@ -46,6 +62,11 @@ namespace MediatonicPets.Controllers
             return CreatedAtRoute("GetPet", new { id = newPet.Id.ToString() }, newPet);
         }
 
+        /// <summary>
+        /// Updates a specific Pet.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newPet"></param> 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Pet newPet)
         {
@@ -61,6 +82,10 @@ namespace MediatonicPets.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a specific Pet.
+        /// </summary>
+        /// <param name="id"></param> 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
@@ -76,7 +101,11 @@ namespace MediatonicPets.Controllers
             return NoContent();
         }
 
-
+        /// <summary>
+        /// Strokes a specific Pet - Increases Happiness.
+        /// </summary>
+        /// <param name="id"></param> 
+        [Produces("application/json")]
         [HttpPut("{id:length(24)}/stroke")]
         public IActionResult Stroke(string id)
         {
@@ -91,6 +120,11 @@ namespace MediatonicPets.Controllers
             return Ok(resultPet);
         }
 
+        /// <summary>
+        /// Feeds a specific Pet - Decreases Hungriness.
+        /// </summary>
+        /// <param name="id"></param> 
+        [Produces("application/json")]
         [HttpPut("{id:length(24)}/feed")]
         public IActionResult Feed(string id)
         {

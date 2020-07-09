@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY mediatonic_pets.csproj .
+COPY MediatonicPets.csproj .
 RUN dotnet restore
 COPY . .
 RUN dotnet publish -c release -o /app

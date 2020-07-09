@@ -23,7 +23,11 @@ namespace MediatonicPets.Services
         /// </summary>
         public PetService(IPetDatabaseSettings settings, List<PetConfigurationSettings> petSettings)
         {
-            var client = new MongoClient(settings.ConnectionString);
+            string detectedHost = Environment.GetEnvironmentVariable("MONGODB_HOST");
+            if (detectedHost == null) {
+                detectedHost = settings.ConnectionString;
+            }
+            var client = new MongoClient(detectedHost);
             var database = client.GetDatabase(settings.DatabaseName);
 
             _petSettings = petSettings;
@@ -59,6 +63,9 @@ namespace MediatonicPets.Services
             // This check should not be necessary thanks to the one above, but there could be other conditions 
             // to return null on the static Method above.
             if (newPet == null) {
+                return null;
+            }
+            if (_owners.CountDocuments(user => user.Id.Equals(id)) == 0){
                 return null;
             }
             newPet.OwnerID = id;

@@ -49,7 +49,7 @@ namespace MediatonicPets.Factories
         public static Pet GeneratePetByType(string petType, List<PetConfigurationSettings> _petSettings) {
             PetFactory petFact;
             string petTypeLC = petType.ToLower();
-            var foundSettings = _petSettings.Where(sett => sett.Type == petTypeLC).ToList();
+            var foundSettings = _petSettings.Where(sett => sett.Type.Equals(petTypeLC)).ToList();
             if (foundSettings.Count == 0){
                 return null;
             }
@@ -59,7 +59,7 @@ namespace MediatonicPets.Factories
                     petFact = new DogFactory(foundSettings.First());
                     break;
                 case "cat":
-                    petFact = new CatFactory((IPetConfigurationSettings)_petSettings.Where(sett => sett.Type == petTypeLC).First());
+                    petFact = new CatFactory(foundSettings.First());
                     break;
                 default:
                     return null;

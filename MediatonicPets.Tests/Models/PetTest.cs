@@ -22,7 +22,7 @@ namespace MediatonicPets.Tests.Models
             float minutesElapsed = 5.0f;
             float expectedHapiness = initialHapiness + minutesElapsed * generatedPet.HappinessRate;
             float expectedHungriness = initialHungriness + minutesElapsed * generatedPet.HungrinessRate;
-            generatedPet.LastUpdate =  DateTime.Now - TimeSpan.FromMinutes(minutesElapsed);
+            generatedPet.LastUpdate =  DateTime.UtcNow - TimeSpan.FromMinutes(minutesElapsed);
             generatedPet.UpdateMetrics();
             Assert.Equal(generatedPet.Hungriness, expectedHungriness);
             Assert.Equal(generatedPet.Happiness, expectedHapiness);
@@ -34,7 +34,7 @@ namespace MediatonicPets.Tests.Models
             float minutesToSadness = MathF.Ceiling((generatedPet.Happiness - generatedPet.HAPPINESS_MIN) / MathF.Abs(generatedPet.HappinessRate));
             float minutesToStarve = MathF.Ceiling((generatedPet.HUNGRINESS_MAX - generatedPet.Hungriness) / MathF.Abs(generatedPet.HungrinessRate));
             float minutesElapsed = (minutesToSadness > minutesToStarve) ? minutesToSadness : minutesToStarve;
-            generatedPet.LastUpdate =  DateTime.Now - TimeSpan.FromMinutes(minutesElapsed);
+            generatedPet.LastUpdate =  DateTime.UtcNow - TimeSpan.FromMinutes(minutesElapsed);
             generatedPet.UpdateMetrics();
             Assert.Equal(generatedPet.Hungriness, generatedPet.HUNGRINESS_MAX);
             Assert.Equal(generatedPet.Happiness, generatedPet.HAPPINESS_MIN);

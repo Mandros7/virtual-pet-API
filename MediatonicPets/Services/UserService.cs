@@ -17,7 +17,11 @@ namespace MediatonicPets.Services
 
         public UserService(IPetDatabaseSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
+            string detectedHost = Environment.GetEnvironmentVariable("MONGODB_HOST");
+            if (detectedHost == null || detectedHost.Equals("")) {
+                detectedHost = settings.ConnectionString;
+            }
+            var client = new MongoClient(detectedHost);
             var database = client.GetDatabase(settings.DatabaseName);
 
             _pets = database.GetCollection<Pet>(settings.PetCollectionName);

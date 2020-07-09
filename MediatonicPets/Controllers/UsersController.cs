@@ -21,11 +21,19 @@ namespace MediatonicPets.Controllers
             _userService = userService;
         }
 
-
+        /// <summary>
+        /// Retrieves a list of all existing Users
+        /// </summary>
+        [Produces("application/json")]
         [HttpGet]
         public ActionResult<List<User>> Get() =>
             _userService.Get();
 
+        /// <summary>
+        /// Retrieves information about a specific User.
+        /// </summary>
+        /// <param name="id"></param> 
+        [Produces("application/json")]
         [HttpGet("{id:length(24)}", Name = "GetUser")]
         public ActionResult<User> Get(string id)
         {
@@ -37,6 +45,10 @@ namespace MediatonicPets.Controllers
             return user;
         }
 
+        /// <summary>
+        /// Creates a new User.
+        /// </summary>
+        [Produces("application/json")]
         [HttpPost]
         public ActionResult<User> Create()
         {
@@ -48,6 +60,10 @@ namespace MediatonicPets.Controllers
             return CreatedAtRoute("GetUser", new { id = newUser.Id.ToString() }, newUser);
         }
 
+        /// <summary>
+        /// Deletes a specific User.
+        /// </summary>
+        /// <param name="id"></param>    
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {

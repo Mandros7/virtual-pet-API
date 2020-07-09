@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MediatonicPets.Factories;
 using MediatonicPets.Models;
@@ -20,7 +21,6 @@ namespace MediatonicPets.Tests.Services
         public PetServiceTests() {
             PetDatabaseSettings settings = new PetDatabaseSettings();
             settings.ConnectionString = "mongodb+srv://sampleuser:sampleuser@cluster0.xcels.mongodb.net/petDbStoreTest?retryWrites=true&w=majority";
-;
             settings.DatabaseName = "petDbStore";
             settings.PetCollectionName = "pets";
             settings.UserCollectionName = "users";
@@ -28,11 +28,23 @@ namespace MediatonicPets.Tests.Services
             _petService = new PetService(settings, GlobalPetConfigurationSettings.generateDefaultSettings().Metrics);
             
             // Cleanup environment before running tests
-            var client = new MongoClient(settings.ConnectionString);
+            string detectedHost = Environment.GetEnvironmentVariable("MONGODB_HOST");
+            if (detectedHost == null) {
+                detectedHost = settings.ConnectionString;
+            }
+            var client = new MongoClient(detectedHost);
             var database = client.GetDatabase(settings.DatabaseName);
             _usersDB = database.GetCollection<User>(settings.UserCollectionName);
             _petsDB = database.GetCollection<Pet>(settings.PetCollectionName);
         }
+
+        [Fact]
+        public void CreatePetWithoutOwnerTest() {
+            _usersDB.DeleteMany(user => true);
+            _petsDB.DeleteMany(pet => true);
+            Assert.Null(_petService.Create("000000000000000000000000","dog"));
+        }
+
 
         [Fact]
         public void CreatePetTest() {
@@ -70,8 +82,8 @@ namespace MediatonicPets.Tests.Services
             _usersDB.DeleteMany(user => true);
             _petsDB.DeleteMany(pet => true);
             User singleUser = _userService.Create(new User());
-            _petService.Create(singleUser.Id,"dog");
-            _petService.Create(singleUser.Id,"cat");
+            Assert.NotNull(_petService.Create(singleUser.Id,"dog"));
+            Assert.NotNull(_petService.Create(singleUser.Id,"dog"));
             List<Pet> foundPets = _petService.Get();
             List<Pet> foundUserPets = _petService.GetUserPets(singleUser.Id);
             Assert.Equal(2,foundPets.Count);
