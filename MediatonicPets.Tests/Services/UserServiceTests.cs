@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MediatonicPets.Models;
 using MediatonicPets.Services;
@@ -22,7 +23,11 @@ namespace MediatonicPets.Tests.Services
             _userService = new UserService(settings);
             
             // Cleanup environment before running tests
-            var client = new MongoClient(settings.ConnectionString);
+            string detectedHost = Environment.GetEnvironmentVariable("MONGODB_HOST");
+            if (detectedHost == null) {
+                detectedHost = settings.ConnectionString;
+            }
+            var client = new MongoClient(detectedHost);
             var database = client.GetDatabase(settings.DatabaseName);
             _usersDB = database.GetCollection<User>(settings.UserCollectionName);
         }
