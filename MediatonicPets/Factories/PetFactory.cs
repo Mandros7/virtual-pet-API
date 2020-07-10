@@ -6,8 +6,8 @@ using MediatonicPets.Models;
 namespace MediatonicPets.Factories
 {
     /// <summary>
-    /// Class <c>PetFactory</c> provides an interface to Pet Generation Classes
-    /// This class includes one static method to Generate a Pet passing just the type.
+    /// Class <c>PetFactory</c> allows instantiation of Pet objects
+    /// Generates a Pet passing just the type.
     /// </summary>
     public class PetFactory
     {

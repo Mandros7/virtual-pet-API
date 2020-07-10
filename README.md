@@ -29,12 +29,17 @@
   - [Setup Procedure](#setup-procedure)
     - [Local Environment](#local-environment)
     - [Docker Environment](#docker-environment)
+    - [Configuration Options](#configuration-options)
+      - [Custom App configuration - appsettings.json](#custom-app-configuration---appsettingsjson)
   - [Testing](#testing)
     - [Local Test Environment](#local-test-environment)
     - [Docker Test Environment](#docker-test-environment)
     - [Travis CI Environment](#travis-ci-environment)
 - [Usage](#usage)
 - [Design Choices](#design-choices)
+  - [Application Structure](#application-structure)
+  - [Configuration Options](#configuration-options-1)
+  - [Happiness decay and Hungriness Increase](#happiness-decay-and-hungriness-increase)
 - [Contact](#contact)
 
 
@@ -197,6 +202,9 @@ The usage of a Factory pattern will benefit the design by allowing to extend the
  The application performs parsing of configuration files to override default Pet values when necessary. This allows tweaking of values on testing and staging environments in a more iterative way, reducing the need to modify lines of code.
 
 ### Happiness decay and Hungriness Increase
+
+*NOTE*: Metric rates in this case are set per minute.
+
 While it is tempting to generate Asynchronous Tasks to handle the update of pets, the code in this solution allows us to update Pet metrics *only when it's necessary*, that is, *only when the End-User requests to see them*. 
 
 From a business point of view, this enables a directly proportional relationship between the processing resources dedicated to serving API calls, and the activity of users. Idle end-users will only consume storage capacity on the database, which could be pruned based on operational necessities.
