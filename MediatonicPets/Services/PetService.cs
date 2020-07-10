@@ -56,13 +56,8 @@ namespace MediatonicPets.Services
         public Pet Create(string id, string petType)
         {
             // Prevent non-existing types of Pets to be created. A null return will result in a
-            // BadRequest response on the side of the Controller
-            //if (!Enum.GetNames(typeof(PetTypes)).Contains(petType)) {
-            //    return null;
-            //}
-            Pet newPet = _petFactory.GetPet(petType);
-            // This check should not be necessary thanks to the one above, but there could be other conditions 
-            // to return null on the static Method above.
+            // BadRequest response on the side of the Controller        
+            Pet newPet = _petFactory.GetPet(petType);        
             if (newPet == null) {
                 return null;
             }
