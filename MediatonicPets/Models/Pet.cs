@@ -9,7 +9,8 @@ namespace MediatonicPets.Models
     /// </summary>
     public enum PetTypes {
         dog = 0,
-        cat = 1
+        cat = 1,
+        fish = 2
     }
 
     /// <summary>

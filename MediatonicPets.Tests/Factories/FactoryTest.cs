@@ -6,33 +6,35 @@ namespace MediatonicPets.Factories.Tests
 {
     public class FactoryTest
     {
-        private readonly DogFactory _dogFactory;
-        private readonly PetConfigurationSettings _dogSettings;
-
+        private readonly PetFactory _petFactory;
         private readonly List<PetConfigurationSettings> _allSettings;
 
         public FactoryTest () {
-
-            _dogSettings = new PetConfigurationSettings();
-            _dogSettings.Type = "dog";
-            _dogFactory = new DogFactory(_dogSettings);
             _allSettings = GlobalPetConfigurationSettings.generateDefaultSettings().Metrics;
+            _petFactory = new PetFactory(_allSettings);
         }
 
         [Fact]
-        public void DogFactory_Default()
+        public void DogFactory_NotConfigured()
         {
             Pet expectedPet = new Pet();
-            expectedPet.Type = "dog";
-            Pet generatedPet = _dogFactory.GetPet();
+            expectedPet.Type = "fish";
+            Pet generatedPet = _petFactory.GetPet("fish");
             Assert.Equal(expectedPet.Type,generatedPet.Type);
         }
 
         [Fact]
         public void FactoryByType()
         {
-            Pet newPet = PetFactory.GeneratePetByType("dog",_allSettings);
+            Pet newPet = _petFactory.GetPet("dog");
             Assert.Equal("dog",newPet.Type);
+        }
+
+        [Fact]
+        public void UnImplementedPetTest()
+        {
+            Pet newPet = _petFactory.GetPet("dragon");
+            Assert.Null(newPet);
         }
     }
 }

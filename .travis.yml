@@ -1,0 +1,11 @@
+language: csharp
+mono: none
+dist: xenial
+dotnet: 3.1
+install:
+  - dotnet restore
+script:
+  - dotnet build -c Debug
+  - dotnet test -c Debug --no-build MediatonicPets.Tests\MediatonicPets.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+after_script:
+  - bash <(curl -s https://codecov.io/bash) 

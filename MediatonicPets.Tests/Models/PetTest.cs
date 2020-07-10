@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MediatonicPets.Factories;
 using MediatonicPets.Models;
 using Xunit;
@@ -8,15 +9,16 @@ namespace MediatonicPets.Tests.Models
     public class PetTest
     {
 
-        private readonly DogFactory _dogFactory;
+        private readonly PetFactory _petFactory;
         public PetTest() {
-            _dogFactory = new DogFactory();
+            List<PetConfigurationSettings> _allSettings = GlobalPetConfigurationSettings.generateDefaultSettings().Metrics;
+            _petFactory = new PetFactory(_allSettings);
         }
         
         [Fact]
         public void UpdateStats()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             float initialHapiness = generatedPet.Happiness;
             float initialHungriness = generatedPet.Hungriness;
             float minutesElapsed = 5.0f;
@@ -30,7 +32,7 @@ namespace MediatonicPets.Tests.Models
         [Fact]
         public void UpdateStatsHungryAndUnhappyLimits()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             float minutesToSadness = MathF.Ceiling((generatedPet.Happiness - generatedPet.HAPPINESS_MIN) / MathF.Abs(generatedPet.HappinessRate));
             float minutesToStarve = MathF.Ceiling((generatedPet.HUNGRINESS_MAX - generatedPet.Hungriness) / MathF.Abs(generatedPet.HungrinessRate));
             float minutesElapsed = (minutesToSadness > minutesToStarve) ? minutesToSadness : minutesToStarve;
@@ -43,7 +45,7 @@ namespace MediatonicPets.Tests.Models
         [Fact]
         public void StrokeTest()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             generatedPet.Happiness = generatedPet.HAPPINESS_MAX - 2.0f*generatedPet.StrokeHappiness;
             float expectedHapiness = generatedPet.Happiness + generatedPet.StrokeHappiness;
             generatedPet.Stroke();
@@ -53,7 +55,7 @@ namespace MediatonicPets.Tests.Models
         [Fact]
         public void StrokeTestMax()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             generatedPet.Happiness = generatedPet.HAPPINESS_MAX;
             float expectedHapiness = generatedPet.HAPPINESS_MAX;
             generatedPet.Stroke();
@@ -63,7 +65,7 @@ namespace MediatonicPets.Tests.Models
         [Fact]
         public void FeedTest()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             generatedPet.Hungriness = generatedPet.HUNGRINESS_MAX + 2.0f*generatedPet.FeedHungriness;
             float expectedHungriness = generatedPet.Hungriness + generatedPet.FeedHungriness;
             generatedPet.Feed();
@@ -73,7 +75,7 @@ namespace MediatonicPets.Tests.Models
         [Fact]
         public void FeedTestMin()
         {
-            Pet generatedPet = _dogFactory.GetPet();
+            Pet generatedPet = _petFactory.GetPet();
             generatedPet.Hungriness = generatedPet.HUNGRINESS_MIN;
             float expectedHungriness = generatedPet.HUNGRINESS_MIN;
             generatedPet.Feed();

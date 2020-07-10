@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MediatonicPets.Models;
@@ -8,17 +9,19 @@ namespace MediatonicPets.Factories
     /// Class <c>PetFactory</c> provides an interface to Pet Generation Classes
     /// This class includes one static method to Generate a Pet passing just the type.
     /// </summary>
-    public abstract class PetFactory
+    public class PetFactory
     {
-        protected float BASE_HAPPINESS = 50.0f;
-        protected float BASE_HUNGRINESS = 50.0f;
-        protected float BASE_HAPPINESS_RATE = -0.3f;
-        protected float BASE_HUNGRINESS_RATE = 0.4f;
-        protected float BASE_STROKE_HAPPINESS = 5.0f;
-        protected float BASE_FEED_HUNGRINESS = -10.0f;
+        private float BASE_HAPPINESS = 50.0f;
+        private float BASE_HUNGRINESS = 50.0f;
+        private float BASE_HAPPINESS_RATE = -0.3f;
+        private float BASE_HUNGRINESS_RATE = 0.4f;
+        private float BASE_STROKE_HAPPINESS = 5.0f;
+        private float BASE_FEED_HUNGRINESS = -10.0f;
+
+        private List<PetConfigurationSettings> _settings;
 
         /// <summary>Method <c>GetPet</c> returns the pet using the current configuration values</summary>
-        public virtual Pet GetPet() {
+        public Pet GetPet() {
             Pet newPet = new Pet();
             newPet.Happiness = BASE_HAPPINESS;
             newPet.Hungriness = BASE_HUNGRINESS;
@@ -30,41 +33,37 @@ namespace MediatonicPets.Factories
         }    
 
         /// <summary>This constructor allows to use configuration files as sources for the metrics</summary>
-        public PetFactory(IPetConfigurationSettings settings)  {
-            BASE_HAPPINESS = settings.Happiness;
-            BASE_HUNGRINESS = settings.Hungriness;
-            BASE_HAPPINESS_RATE = settings.HappinessRate;
-            BASE_HUNGRINESS_RATE = settings.HungrinessRate;
-            BASE_STROKE_HAPPINESS = settings.StrokeHappiness;
-            BASE_FEED_HUNGRINESS = settings.FeedHungriness;  
+        public PetFactory(List<PetConfigurationSettings> settings)  {
+            _settings = settings; 
         }
 
-        /// <summary>This constructor allows to the default values as sources for the metrics</summary>
-        public PetFactory() {
-
-        }
-        /// <summary>The static method <c>GeneratePetByType</c> instantiates a child Pet Factory 
+        
+        /// <summary>The method <c>GetPet</c> instantiates a  Pet 
         /// based on the type of Pet and using the config files as source.
         /// </summary>
-        public static Pet GeneratePetByType(string petType, List<PetConfigurationSettings> _petSettings) {
-            PetFactory petFact;
+        public Pet GetPet(string petType) {
             string petTypeLC = petType.ToLower();
-            var foundSettings = _petSettings.Where(sett => sett.Type.Equals(petTypeLC)).ToList();
+            var foundSettings = _settings.Where(sett => sett.Type.Equals(petTypeLC)).ToList();
             if (foundSettings.Count == 0){
-                return null;
+                if (Enum.IsDefined(typeof(PetTypes), petTypeLC)){
+                    Pet basePet = GetPet();
+                    basePet.Type = petTypeLC;
+                    return basePet;
+                }
+                else return null; 
             }
-            switch (petTypeLC)
-            {
-                case "dog":
-                    petFact = new DogFactory(foundSettings.First());
-                    break;
-                case "cat":
-                    petFact = new CatFactory(foundSettings.First());
-                    break;
-                default:
-                    return null;
+            else {
+                PetConfigurationSettings petToCreateSettings = foundSettings.First();
+                Pet newPet = new Pet();
+                newPet.Happiness = petToCreateSettings.Happiness;
+                newPet.Hungriness = petToCreateSettings.Hungriness;
+                newPet.HappinessRate = petToCreateSettings.HappinessRate;
+                newPet.HungrinessRate = petToCreateSettings.HungrinessRate;
+                newPet.StrokeHappiness = petToCreateSettings.StrokeHappiness;
+                newPet.FeedHungriness = petToCreateSettings.FeedHungriness;
+                newPet.Type = petTypeLC;
+                return newPet;
             }
-            return petFact.GetPet();
         } 
     }
 }

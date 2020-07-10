@@ -15,8 +15,9 @@ namespace MediatonicPets.Services
     {
         private readonly IMongoCollection<Pet> _pets;
         private readonly IMongoCollection<User> _owners;
+        private readonly PetFactory _petFactory;
 
-        private readonly List<PetConfigurationSettings> _petSettings;
+
 
         /// <summary>The constructor <c>PetService</c> will receive setting parameters provided that 
         /// those have been configured accordingly on the Setup.cs file of the solution
@@ -30,7 +31,7 @@ namespace MediatonicPets.Services
             var client = new MongoClient(detectedHost);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _petSettings = petSettings;
+            _petFactory = new PetFactory(petSettings);
             _pets = database.GetCollection<Pet>(settings.PetCollectionName); 
             _owners = database.GetCollection<User>(settings.UserCollectionName);
         }
@@ -59,7 +60,7 @@ namespace MediatonicPets.Services
             //if (!Enum.GetNames(typeof(PetTypes)).Contains(petType)) {
             //    return null;
             //}
-            Pet newPet = PetFactory.GeneratePetByType(petType,_petSettings);
+            Pet newPet = _petFactory.GetPet(petType);
             // This check should not be necessary thanks to the one above, but there could be other conditions 
             // to return null on the static Method above.
             if (newPet == null) {
