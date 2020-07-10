@@ -6,6 +6,6 @@ install:
   - dotnet restore
 script:
   - dotnet build -c Debug
-  - dotnet test -c Debug --no-build MediatonicPets.Tests/MediatonicPets.Tests.csproj --collect "Code Coverage" /p:CoverletOutputFormat=opencover
+  - dotnet test -c Debug --no-build MediatonicPets.Tests/MediatonicPets.Tests.csproj --collect:"XPlat Code Coverage"
 after_script:
   - bash <(curl -s https://codecov.io/bash) 
